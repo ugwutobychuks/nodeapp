@@ -1,26 +1,26 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const app = express();
 const PORT = 3000;
 
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'views')));
 
-const users = {
-    'user1': 'password1',
-    'user2': 'password2'
-};
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
+});
 
 app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-
-    if (users[username] && users[username] === password) {
-        res.json({ success: true });
-    } else {
-        res.json({ success: false, message: 'Invalid username or password' });
-    }
+  const { username, password } = req.body;
+  if (username === 'admin' && password === 'password') {
+    res.send('Login successful!');
+  } else {
+    res.send('Invalid username or password');
+  }
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
